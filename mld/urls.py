@@ -7,6 +7,8 @@ from mld import views
 
 app_name = 'mld'
 urlpatterns = [
-    url(r'^$', views.index, name ='index')
+    url(r'^$', views.index, name ='index'),
+    url(r'^addmark/',views.addmark),
+    url(r'^add/',views.add),
 
 ]

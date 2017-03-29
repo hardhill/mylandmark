@@ -10,13 +10,13 @@ class Targets(models.Model):
     created_dt = models.DateTimeField(auto_now=True)
     longitude = models.FloatField()
     latitude = models.FloatField()
-    altitude = models.FloatField()
-    #точка для всех пользовтелей
-    forall = models.BooleanField(default=True)
+
+    # точка для всех пользовтелей
+    isprivate = models.BooleanField(default=False)
 
     def __str__(self):
         txt = self.description
         return txt
 
     class Meta:
-        unique_together = ("longitude","latitude","altitude")
+        unique_together = ('longitude', 'latitude')
