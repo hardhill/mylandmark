@@ -39,6 +39,7 @@
                     ]
                 }
             });
+
             map.addListener('click', function (e) {
                 placeMarkerAndPanTo(e.latLng, map);
                 placeMarkerAndFields(e.latLng, map);
@@ -100,40 +101,17 @@
 </header>
 <div class="container">
     <div class="card p-2">
-        <form id="frmData">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="txtdescription">Description</label>
-                <input type="text" class="form-control" id="txtdescription" aria-describedby="descrHelp"
-                       placeholder="Input description" maxlength="200" name="txtdescr">
-                <small id="descrHelp" class="form-text text-muted">Input landmark description.</small>
-            </div>
-            <div class="form-group">
-                <label for="txtlati">Latitude</label>
-                <input type="text" class="form-control" id="txtlati" aria-describedby="latiHelp" name="txtlat">
-                <small id="latiHelp" class="form-text text-muted">the value of this field is determined by the position
-                    marker on the map
-                </small>
-            </div>
-            <div class="form-group">
-                <label for="txtlongi">Longitude</label>
-                <input type="number" class="form-control" id="txtlongi" aria-describedby="longiHelp" name="txtlng">
-                <small id="longiHelp" class="form-text text-muted">the value of this field is determined by the position
-                    marker on the map
-                </small>
-            </div>
-
-            <button id="btnAddPosition" onclick="addData()" class="btn btn-primary">Add position</button>
-        </form>
+    {% for marker in markers %}
+        <p>{{ marker.description }} lon:{{ marker.longitude }} lat:{{ marker.latitude }}</p>
+    {% endfor %}
     </div>
 
 </div>
 
 
-<div id="map" style="width: 100%; height: 400px;"></div>
+<div id="map" style="width: 100%; height: 600px;"></div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCI-xDAIte2eH2mehinBidaFHm3WhUkHAk&callback=initMap"
-        async defer></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
 </body>
 </html>
