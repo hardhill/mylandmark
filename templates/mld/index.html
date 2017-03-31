@@ -29,7 +29,7 @@
             aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <a class="navbar-brand" href="#">My landmarks</a>
+    <a class="navbar-brand" href="#"><i class="logo"></i>My landmarks</a>
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ml-auto">
@@ -53,8 +53,8 @@
         <div class="card-block">
             <h4 class="card-title">Что может "My landmarks"</h4>
             <p class="card-text">В этом приложении вы можете создать свои метки на карте</p>
-            <a href="{% url 'mld:addmark' %}" class="btn btn-primary">Your new landmark</a>
-            <a href="{% url 'mld:viewmark' %}" class="btn btn-primary">View landmarks</a>
+            <a href="{% url 'mld:addmark' %}" class="btn btn-primary">Add</a>
+            <a href="{% url 'mld:viewmark' %}" class="btn btn-primary">View</a>
         </div>
     </div>
 </div>

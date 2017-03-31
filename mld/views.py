@@ -1,4 +1,4 @@
-from django.http import  HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -17,11 +17,12 @@ def add(request):
         if descr and lng and lat:
             t = Targets(description=descr,longitude=lng,latitude=lat)
             t.save(force_insert=True)
-            html = '<p>Данные добавлены :</p><p>' + descr + '</p><p>' + lng + '</p><p>' + lat + '</p>'
+
         else:
             html = '<p>Ошибка: параметры имеют пустое значение</p>'
+            return HttpResponse(html)
 
-    return HttpResponse(html)
+    return HttpResponseRedirect(reverse('mld:viewmark'))
 
 
 def addmark(request):

@@ -8,4 +8,6 @@ h3 {
 .mld-bg-title1{
     background-color: #dbffd0;
 }
-
+.logo{
+    background: image('/mld/static/img/logo.png');
+}
