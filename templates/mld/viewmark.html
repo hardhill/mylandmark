@@ -17,10 +17,11 @@
             integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn"
             crossorigin="anonymous"></script>
 
-<script>
+    <script>
 
         var map;
         var markers = [];
+        var usermarks = [];
 
 
         function initMap() {
@@ -42,27 +43,33 @@
 
             map.addListener('click', function (e) {
                 placeMarkerAndPanTo(e.latLng, map);
-                placeMarkerAndFields(e.latLng, map);
+                //placeMarkerAndFields(e.latLng, map);
+
+                viewMarker(markers)
+                viewMarker(usermarks)
             });
+            createMarkersfromData();
+            //createMarkersTest();
+            viewMarker(usermarks)
+            viewMarker(markers)
+
         }
         function placeMarkerAndPanTo(latLng, map) {
-            // очистить  все маркеры
-            if (markers.length > 0) {
-                for (var i = 0; i < markers.length; i++) {
-                    markers[i].setMap(null);
-                }
-                markers = [];
-            }
+
             // создать маркер
             var marker = new google.maps.Marker({
-                position: latLng,
-                map: map
+                position: latLng
             });
+            //
+            markers.forEach(function (item, i, markers) {
+                item.setMap(null);
+            })
+            markers = [];
             markers.push(marker);
+
             window.setTimeout(function () {
                 map.panTo(marker.getPosition());
             }, 1000);
-
         }
 
         function placeMarkerAndFields(latLng, map) {
@@ -86,7 +93,27 @@
             frm.method = 'POST';
             frm.submit();
         }
-{#    google.maps.event.addDomListener(window, 'load', initMap());#}
+
+
+        function createMarkersfromData() {
+        // наполнение массива маркеров из БД
+        usermarks = [];
+            {% for marker in markers %}
+                var mlat = parseFloat('{{ marker.latitude}}'.replace(',','.'));
+                var mlng = parseFloat('{{ marker.longitude}}'.replace(',','.'));
+                var mylatlng = {lat:mlat, lng:mlng};
+                var mrk = new google.maps.Marker();
+                mrk.setPosition(mylatlng);
+                usermarks.push(mrk);
+            {% endfor %}
+
+        }
+        function viewMarker(mks) {
+            mks.forEach(function (item, i, mks) {
+                item.setMap(map);
+            });
+        }
+        {#    google.maps.event.addDomListener(window, 'load', initMap());#}
     </script>
 </head>
 <body onload="initMap()">
@@ -101,9 +128,9 @@
 </header>
 <div class="container">
     <div class="card p-2">
-    {% for marker in markers %}
-        <p>{{ marker.description }} lon:{{ marker.longitude }} lat:{{ marker.latitude }}</p>
-    {% endfor %}
+        {% for marker in markers %}
+            <p>{{ marker.description }} lon:{{ marker.longitude }} lat:{{ marker.latitude }}</p>
+        {% endfor %}
     </div>
 
 </div>
