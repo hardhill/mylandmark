@@ -22,9 +22,11 @@
         var map;
         var markers = [];
         var usermarks = [];
+        var modeFormButton = {modeNew: 0, modeEdit: 1}
         var iconBase = 'https://maps.gstatic.com/mapfiles/ms2/micons/';
-        var defaulticonurl = iconBase+'red-dot.png';
-        var editicon = iconBase +'yellow-dot.png';
+        var defaulticonurl = iconBase + 'red-dot.png';
+        var editicon = iconBase + 'yellow-dot.png';
+        var newicon = iconBase + 'blue.png';
 
 
         function initMap() {
@@ -41,20 +43,21 @@
                         google.maps.MapTypeId.TERRAIN
                     ]
                 },
-                mapTypeId:google.maps.MapTypeId.SATELLITE
+                mapTypeId: google.maps.MapTypeId.SATELLITE
             });
 
             map.addListener('click', function (e) {
                 placeMarkerAndPanTo(e.latLng, map);
-                //placeMarkerAndFields(e.latLng, map);
-
-                viewMarker(markers)
+                placeMarkerAndFields(e.latLng, map);
+                setButton(modeFormButton.modeNew)
                 viewMarker(usermarks)
+                viewNewMarker(markers)
             });
             createMarkersfromData();
-            //createMarkersTest();
+            //показать маркер новый
+            viewNewMarker(markers)
+            //показать маркеры из БД
             viewMarker(usermarks)
-            viewMarker(markers)
 
         }
         function placeMarkerAndPanTo(latLng, map) {
@@ -86,7 +89,23 @@
                 txt2.value = ll.lng();
             }
         }
-
+        function setButton(modeForm) {
+            var m = modeForm;
+            switch (m) {
+                case 0:
+                    document.getElementById('bAdd').disabled = false;
+                    document.getElementById('bEdit').disabled = true;
+                    document.getElementById('bDelete').disabled = true;
+                    break;
+                case 1:
+                    document.getElementById('bAdd').disabled = true;
+                    document.getElementById('bEdit').disabled = false;
+                    document.getElementById('bDelete').disabled = false;
+                    break;
+                default:
+                    break;
+            }
+        }
         function addData() {
             var d = document.getElementById('txtdescription').value;
             var lat = document.getElementById('txtlati').value;
@@ -112,28 +131,38 @@
 
         }
         function viewMarker(mks) {
-            var icon ={
-                path: google.maps.SymbolPath.CIRCLE,
-                scale:3
-            };
-            var img = {
-                url:"{% static 'img/editmark.png' %}",
-                anchor: new google.maps.Point(0, 46)
-            }
             mks.forEach(function (item, i, mks) {
                 item.setMap(map);
                 item.setIcon(defaulticonurl);
                 item.addListener('click', function () {
+                    deleteNewMarker(markers);
                     var markerPos = item.getPosition();
-                    setUsertIcon(mks,defaulticonurl);
+                    setUsertIcon(mks, defaulticonurl);
                     item.setIcon(editicon);
+                    // установить режим редактирования маркера
+                    setButton(modeFormButton.modeEdit);
                 });
             });
         }
-        function setUsertIcon(markers,urlicon){
-            markers.forEach(function(item,i,allmarkers){
+        function viewNewMarker(mks) {
+            mks.forEach(function (item, i, mks) {
+                item.setMap(map);
+                item.setIcon(newicon);
+                item.addListener('click', function () {
+                    var markerPos = item.getPosition();
+                });
+            });
+        }
+        function setUsertIcon(markers, urlicon) {
+            markers.forEach(function (item, i, allmarkers) {
                 item.setIcon(urlicon);
             })
+        }
+        function deleteNewMarker(mks) {
+            mks.forEach(function (item, i, mks) {
+                item.setMap(null);
+            });
+            mks = [];
         }
         {#    google.maps.event.addDomListener(window, 'load', initMap());#}
     </script>
@@ -154,34 +183,36 @@
             <h3>Данные маркера</h3>
         </div>
         <div class="card-block">
-           <form id="frmMarker">
+            <form id="frmMarker">
                 {% csrf_token %}
-            <div class="form-group">
-                <label for="txtdescription">Description</label>
-                <input type="text" class="form-control" id="txtdescription" aria-describedby="descrHelp"
-                       placeholder="Input description" maxlength="200" name="txtdescr">
-                <small id="descrHelp" class="form-text text-muted">Input landmark description.</small>
-            </div>
-            <div class="form-group">
-                <label for="txtlati">Latitude</label>
-                <input type="text" class="form-control" id="txtlati" aria-describedby="latiHelp" name="txtlat">
-                <small id="latiHelp" class="form-text text-muted">the value of this field is determined by the position
-                    marker on the map
-                </small>
-            </div>
-            <div class="form-group">
-                <label for="txtlongi">Longitude</label>
-                <input type="number" class="form-control" id="txtlongi" aria-describedby="longiHelp" name="txtlng">
-                <small id="longiHelp" class="form-text text-muted">the value of this field is determined by the position
-                    marker on the map
-                </small>
-            </div>
-           </form>
+                <div class="form-group">
+                    <label for="txtdescription">Description</label>
+                    <input type="text" class="form-control" id="txtdescription" aria-describedby="descrHelp"
+                           placeholder="Input description" maxlength="200" name="txtdescr">
+                    <small id="descrHelp" class="form-text text-muted">Input landmark description.</small>
+                </div>
+                <div class="form-group">
+                    <label for="txtlati">Latitude</label>
+                    <input type="text" class="form-control" id="txtlati" aria-describedby="latiHelp" name="txtlat">
+                    <small id="latiHelp" class="form-text text-muted">the value of this field is determined by the
+                        position
+                        marker on the map
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="txtlongi">Longitude</label>
+                    <input type="number" class="form-control" id="txtlongi" aria-describedby="longiHelp" name="txtlng">
+                    <small id="longiHelp" class="form-text text-muted">the value of this field is determined by the
+                        position
+                        marker on the map
+                    </small>
+                </div>
+            </form>
         </div>
         <div class="card-footer">
-            <button class="button" form="frmMarker">Add</button>
-            <button class="button" form="frmMarker">Edit</button>
-            <button class="button" form="frmMarker">Delete</button>
+            <button id="bAdd" class="button" form="frmMarker">Add</button>
+            <button id="bEdit" class="button" form="frmMarker">Edit</button>
+            <button id="bDelete" class="button" form="frmMarker">Delete</button>
         </div>
     </div>
 </div>
