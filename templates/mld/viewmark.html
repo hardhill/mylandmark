@@ -83,6 +83,7 @@
             if (lnmarker > 0) {
                 var lastmrk = markers[lnmarker - 1]
                 var ll = lastmrk.getPosition();
+                document.getElementById('txtdescription').value = '';
                 var txt1 = document.getElementById('txtlati');
                 var txt2 = document.getElementById('txtlongi');
                 txt1.value = ll.lat();
@@ -126,6 +127,9 @@
                 var mylatlng = {lat: mlat, lng: mlng};
                 var mrk = new google.maps.Marker();
                 mrk.setPosition(mylatlng);
+                //к маркеру приписывается идентификатор маркера из БД
+                mrk.customInfo = "{{ marker.id }}";
+                mrk.setTitle('{{ marker.description }}');
                 usermarks.push(mrk);
             {% endfor %}
 
@@ -139,6 +143,9 @@
                     var markerPos = item.getPosition();
                     setUsertIcon(mks, defaulticonurl);
                     item.setIcon(editicon);
+                    document.getElementById('txtdescription').value = item.getTitle();
+                    document.getElementById('txtlati').value = item.getPosition().lat();
+                    document.getElementById('txtlongi').value = item.getPosition().lng();
                     // установить режим редактирования маркера
                     setButton(modeFormButton.modeEdit);
                 });
@@ -188,12 +195,13 @@
                 <div class="form-group">
                     <label for="txtdescription">Description</label>
                     <input type="text" class="form-control" id="txtdescription" aria-describedby="descrHelp"
-                           placeholder="Input description" maxlength="200" name="txtdescr">
+                           maxlength="200" name="txtdescr">
                     <small id="descrHelp" class="form-text text-muted">Input landmark description.</small>
                 </div>
                 <div class="form-group">
                     <label for="txtlati">Latitude</label>
-                    <input type="text" class="form-control" id="txtlati" aria-describedby="latiHelp" name="txtlat">
+                    <input type="text" class="form-control" id="txtlati" aria-describedby="latiHelp" name="txtlat"
+                           readonly>
                     <small id="latiHelp" class="form-text text-muted">the value of this field is determined by the
                         position
                         marker on the map
@@ -201,7 +209,8 @@
                 </div>
                 <div class="form-group">
                     <label for="txtlongi">Longitude</label>
-                    <input type="number" class="form-control" id="txtlongi" aria-describedby="longiHelp" name="txtlng">
+                    <input type="number" class="form-control" id="txtlongi" aria-describedby="longiHelp" name="txtlng"
+                           readonly>
                     <small id="longiHelp" class="form-text text-muted">the value of this field is determined by the
                         position
                         marker on the map
