@@ -111,9 +111,21 @@
             var d = document.getElementById('txtdescription').value;
             var lat = document.getElementById('txtlati').value;
             var lng = document.getElementById('txtlongi').value;
-            var frm = document.getElementById('frmData');
-            frm.action = '/add/';
+            var frm = document.getElementById('frmMarker');
             frm.method = 'POST';
+            frm.action = '/add/';
+            frm.submit();
+        }
+        function updateData(){
+            var frm = document.getElementById('frmMarker');
+            frm.method = 'POST';
+            frm.action = '/update/';
+            frm.submit();
+        }
+        function deleteData(){
+            var frm = document.getElementById('frmMarker');
+            frm.method = 'POST';
+            frm.action = '/del/';
             frm.submit();
         }
 
@@ -129,7 +141,8 @@
                 mrk.setPosition(mylatlng);
                 //к маркеру приписывается идентификатор маркера из БД
                 mrk.customInfo = "{{ marker.id }}";
-                mrk.setTitle('{{ marker.description }}');
+                //замена всех &quot; в строке на кавычку с помощью рег. выражения /&quot;/g
+                mrk.setTitle('{{ marker.description }}'.replace(/&quot;/g,'"'));
                 usermarks.push(mrk);
             {% endfor %}
 
@@ -146,6 +159,7 @@
                     document.getElementById('txtdescription').value = item.getTitle();
                     document.getElementById('txtlati').value = item.getPosition().lat();
                     document.getElementById('txtlongi').value = item.getPosition().lng();
+                    document.getElementById('idmarker').value = item['customInfo'];
                     // установить режим редактирования маркера
                     setButton(modeFormButton.modeEdit);
                 });
@@ -187,7 +201,7 @@
 <div class="container">
     <div class="card p-2">
         <div class="card-header">
-            <h3>Данные маркера</h3>
+            <h3>Marker data</h3>
         </div>
         <div class="card-block">
             <form id="frmMarker">
@@ -216,12 +230,13 @@
                         marker on the map
                     </small>
                 </div>
+                <input type="hidden" id="idmarker" name="id"/>
             </form>
         </div>
         <div class="card-footer">
-            <button id="bAdd" class="button" form="frmMarker">Add</button>
-            <button id="bEdit" class="button" form="frmMarker">Edit</button>
-            <button id="bDelete" class="button" form="frmMarker">Delete</button>
+            <button id="bAdd" class="button" form="frmMarker" onclick="addData()">Add</button>
+            <button id="bEdit" class="button" form="frmMarker" onclick="updateData()">Edit</button>
+            <button id="bDelete" class="button" form="frmMarker" onclick="deleteData()">Delete</button>
         </div>
     </div>
 </div>

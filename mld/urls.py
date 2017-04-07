@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^addmark/',views.addmark, name='addmark'),
     url(r'^add/',views.add),
     url(r'^viewmark/',views.viewmark,name='viewmark'),
-
+    url(r'^del/',views.delmarker),
+    url(r'^update/',views.update),
 ]
