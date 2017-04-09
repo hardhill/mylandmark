@@ -1,0 +1,1 @@
+web: gunicorn MyLandmark.wsgi --log-file -
